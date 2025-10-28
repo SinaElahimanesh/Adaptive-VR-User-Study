@@ -1,0 +1,10 @@
+condition,task,percent_agreement,count,cohens_kappa,n
+Moving,Controls,1.0,19,1.0,19
+Moving,Key,0.9473684210526315,19,0.919831223628692,19
+Moving,Visual,1.0,19,1.0,19
+Semi-Stationary,Controls,1.0,19,1.0,19
+Semi-Stationary,Key,1.0,19,1.0,19
+Semi-Stationary,Visual,1.0,19,1.0,19
+Stationary,Controls,0.8421052631578947,19,0.3595505617977528,19
+Stationary,Key,0.9473684210526315,19,0.0,19
+Stationary,Visual,0.8947368421052632,19,0.0,19

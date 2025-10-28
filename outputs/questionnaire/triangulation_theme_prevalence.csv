@@ -1,0 +1,4 @@
+condition,visibility,obstruction,stability,interaction,convenience,n,visibility_per_participant,obstruction_per_participant,stability_per_participant,interaction_per_participant,convenience_per_participant
+Moving,42,8,42,19,13,19,2.210526315789474,0.42105263157894735,2.210526315789474,1.0,0.6842105263157895
+Semi-Stationary,37,7,34,19,11,19,1.9473684210526316,0.3684210526315789,1.7894736842105263,1.0,0.5789473684210527
+Stationary,15,5,19,5,4,19,0.7894736842105263,0.2631578947368421,1.0,0.2631578947368421,0.21052631578947367

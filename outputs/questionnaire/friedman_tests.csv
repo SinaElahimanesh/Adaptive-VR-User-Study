@@ -1,0 +1,10 @@
+condition,task,anchors,friedman_chi2,kendalls_w,p_value,n
+Moving,Key,"['World', 'Head', 'Torso', 'Arm']",24.324324324324316,0.42674253200568973,2.1372977283133784e-05,19
+Moving,Visual,"['World', 'Head', 'Torso', 'Arm']",29.258064516129068,0.5132993774759486,1.976527781553652e-06,19
+Moving,Controls,"['World', 'Head', 'Torso', 'Arm']",25.550000000000026,0.44824561403508817,1.184731701918487e-05,19
+Semi-Stationary,Key,"['World', 'Head', 'Torso', 'Arm']",9.440217391304385,0.16561784897025236,0.023975925859480503,19
+Semi-Stationary,Visual,"['World', 'Head', 'Torso', 'Arm']",17.52972972972976,0.3075391180654344,0.0005498341431496647,19
+Semi-Stationary,Controls,"['World', 'Head', 'Torso', 'Arm']",17.42307692307695,0.3056680161943325,0.0005783575252706342,19
+Stationary,Key,"['World', 'Head', 'Torso', 'Arm']",40.723756906077384,0.7144518755452173,7.483577838070603e-09,19
+Stationary,Visual,"['World', 'Head', 'Torso', 'Arm']",40.41666666666666,0.70906432748538,8.69410745381686e-09,19
+Stationary,Controls,"['World', 'Head', 'Torso', 'Arm']",31.516666666666687,0.5529239766081875,6.61652312688985e-07,19

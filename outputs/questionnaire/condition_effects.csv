@@ -1,0 +1,13 @@
+task,anchor,test,h_stat,p_value,conditions
+Controls,Arm,kruskal,15.66967685858371,0.0003957062443064763,"['Moving', 'Semi-Stationary', 'Stationary']"
+Controls,Head,kruskal,3.0250951135786246,0.2203479134947577,"['Moving', 'Semi-Stationary', 'Stationary']"
+Controls,Torso,kruskal,8.825533957283403,0.012121591699263566,"['Moving', 'Semi-Stationary', 'Stationary']"
+Controls,World,kruskal,37.62285772234053,6.765505460130008e-09,"['Moving', 'Semi-Stationary', 'Stationary']"
+Key,Arm,kruskal,5.245717969992772,0.07259501778941417,"['Moving', 'Semi-Stationary', 'Stationary']"
+Key,Head,kruskal,7.549483638173407,0.02294301332546825,"['Moving', 'Semi-Stationary', 'Stationary']"
+Key,Torso,kruskal,15.379853663995599,0.00045741163840646833,"['Moving', 'Semi-Stationary', 'Stationary']"
+Key,World,kruskal,33.63310290652002,4.973527220447926e-08,"['Moving', 'Semi-Stationary', 'Stationary']"
+Visual,Arm,kruskal,6.439985159272788,0.0399553547428141,"['Moving', 'Semi-Stationary', 'Stationary']"
+Visual,Head,kruskal,4.716089663983425,0.09460501118294555,"['Moving', 'Semi-Stationary', 'Stationary']"
+Visual,Torso,kruskal,14.756180181760355,0.0006247930451141349,"['Moving', 'Semi-Stationary', 'Stationary']"
+Visual,World,kruskal,38.944302362753916,3.494235656785131e-09,"['Moving', 'Semi-Stationary', 'Stationary']"
