@@ -41,7 +41,3 @@ python scripts/run_logs_analysis.py --logs_root StudyLogs --outdir outputs/logs
 - `outputs/`: generated results (reports, CSVs, figures)
 - `Questionnaire.csv`: questionnaire data (input)
 - `StudyLogs/`: raw log data (input)
-
-Notes:
-- Re-run the scripts to regenerate outputs. The README intentionally omits analysis details; see the markdown reports above for findings.
-
