@@ -29,23 +29,23 @@ Data: `outputs/desc_by_condition.csv`
 #### Stationary (clear preference for World)
 | Task | World | Head | Torso | Arm |
 |---|---|---|---|---|
-| Key | 7.00 | 4.00 | 3.95 | 2.63 |
-| Visual | 7.00 | 3.89 | 4.26 | 2.79 |
-| Controls | 6.84 | 4.05 | 4.32 | 3.26 |
+| Key | **7.00** | 4.00 | 3.95 | 2.63 |
+| Visual | **7.00** | 3.89 | 4.26 | 2.79 |
+| Controls | **6.84** | 4.05 | 4.32 | 3.26 |
 
 #### Moving (body anchors outperform World)
 | Task | World | Head | Torso | Arm |
 |---|---|---|---|---|
-| Key | 2.32 | 5.53 | 5.95 | 3.84 |
-| Visual | 2.37 | 4.89 | 6.16 | 4.16 |
-| Controls | 2.16 | 5.00 | 5.42 | 5.79 |
+| Key | 2.32 | 5.53 | **5.95** | 3.84 |
+| Visual | 2.37 | 4.89 | **6.16** | 4.16 |
+| Controls | 2.16 | 5.00 | 5.42 | **5.79** |
 
 #### Semi-Stationary (Torso/Arm are strong, World mixed)
 | Task | World | Head | Torso | Arm |
 |---|---|---|---|---|
-| Key | 4.89 | 4.95 | 5.37 | 3.74 |
-| Visual | 3.11 | 5.11 | 5.95 | 3.79 |
-| Controls | 2.68 | 4.79 | 5.42 | 5.37 |
+| Key | 4.89 | 4.95 | **5.37** | 3.74 |
+| Visual | 3.11 | 5.11 | **5.95** | 3.79 |
+| Controls | 2.68 | 4.79 | **5.42** | 5.37 |
 
 Findings: When users are stationary, world-fixed UIs are unequivocally easiest across all tasks (means ≥ 6.84), confirming that stability in the environment maximizes usability. As soon as users move, the numeric center shifts to body-anchored references: torso for continuous-view tasks (Key/Visual) and arm for quick input (Controls). Semi‑stationary lies between, with torso consistently strong and world no longer competitive for Visual/Controls. These patterns corroborate the intuition that optimal anchoring depends jointly on motion and task modality (continuous monitoring vs discrete control).
 
