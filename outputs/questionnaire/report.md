@@ -58,9 +58,17 @@ Figures:
 ### 1.2 Preference distributions (planned top anchors)
 Data: `outputs/preference_distribution.csv`
 
-- Stationary: Key 100% World; Visual 100% World; Controls 94.7% World.
-- Moving: Key Head 42.1% / Torso 36.8% / Arm 15.8% / World 5.3%; Visual Torso 47.4% / Head 31.6% / Arm 21.1%; Controls Arm 57.9% / Head 26.3% / Torso 15.8%.
-- Semi-Stationary: Key World 42.1% / Head 31.6% / Torso 15.8%; Visual Torso 47.4% / Head 42.1%; Controls Arm 57.9% (others much lower).
+| Condition | Task     | World  | Head   | Torso  | Arm    |
+|---|---|---|---|---|---|
+| Stationary | Key      | **100%**   |        |        |        |
+| Stationary | Visual   | **100%**   |        |        |        |
+| Stationary | Controls | **94.7%**  |        |        | 5.3%   |
+| Moving     | Key      | 5.3%   | **42.1%**  | 36.8%  | 15.8%  |
+| Moving     | Visual   |        | 31.6%  | **47.4%**  | 21.1%  |
+| Moving     | Controls |        | 26.3%  | 15.8%  | **57.9%**  |
+| Semi-Stationary | Key      | **42.1%**  | 31.6%  | 15.8%  | 10.5%  |
+| Semi-Stationary | Visual   | 5.3%   | 42.1%  | **47.4%**  | 5.3%   |
+| Semi-Stationary | Controls | 5.3%   | 21.1%  | 15.8%  | **57.9%**  |
 
 Findings: Planned choices mirror the descriptive means: stationary users overwhelmingly plan for world anchoring; moving users gravitate to torso/head for Key/Visual and to arm for Controls; semi‑stationary preferences split between world/torso for Key and torso/head for Visual. This pre‑trial signal anticipates final experience and thus is a strong prior for adaptive systems.
 
