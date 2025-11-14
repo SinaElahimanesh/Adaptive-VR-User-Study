@@ -1,3 +1,21 @@
+## Demographics (Questionnaire)
+
+Data: `outputs/questionnaire/demographics_summary.csv`, `outputs/questionnaire/demographics_gender.csv`, `outputs/questionnaire/demographics_language.csv`, `outputs/questionnaire/demographics_xr_distribution.csv`, `outputs/questionnaire/demographics_videogame_distribution.csv`
+
+- Participants: 19 (unique)
+- Age: mean 36.5 (std=11.0) (min 23, max 60)
+- Gender: Male 10, Female 9
+- XR experience (1–7): mean 1.53 (std=0.84); distribution in `demographics_xr_distribution.csv`
+- Videogame experience (1–7): mean 4.05 (std=1.99); distribution in `demographics_videogame_distribution.csv`
+
+Figures:
+- `figs/age_histogram.png`
+- `figs/gender_distribution.png`
+- `figs/xr_experience_distribution.png`
+- `figs/videogame_experience_distribution.png`
+
+---
+
 ## Data Analysis Report - Questionnaire
 
 ### Dataset overview
@@ -29,23 +47,23 @@ Data: `outputs/desc_by_condition.csv`
 #### Stationary (clear preference for World)
 | Task | World | Head | Torso | Arm |
 |---|---|---|---|---|
-| Key | **7.00** | 4.00 | 3.95 | 2.63 |
-| Visual | **7.00** | 3.89 | 4.26 | 2.79 |
-| Controls | **6.84** | 4.05 | 4.32 | 3.26 |
+| Key | **7.00 (std=0.00)** | 4.00 (std=1.83) | 3.95 (std=1.61) | 2.63 (std=1.38) |
+| Visual | **7.00 (std=0.00)** | 3.89 (std=1.76) | 4.26 (std=1.69) | 2.79 (std=1.36) |
+| Controls | **6.84 (std=0.50)** | 4.05 (std=1.93) | 4.32 (std=1.34) | 3.26 (std=1.79) |
 
 #### Moving (body anchors outperform World)
 | Task | World | Head | Torso | Arm |
 |---|---|---|---|---|
-| Key | 2.32 | 5.53 | **5.95** | 3.84 |
-| Visual | 2.37 | 4.89 | **6.16** | 4.16 |
-| Controls | 2.16 | 5.00 | 5.42 | **5.79** |
+| Key | 2.32 (std=1.83) | 5.53 (std=1.74) | **5.95 (std=1.13)** | 3.84 (std=1.83) |
+| Visual | 2.37 (std=1.67) | 4.89 (std=1.70) | **6.16 (std=1.01)** | 4.16 (std=1.68) |
+| Controls | 2.16 (std=1.50) | 5.00 (std=1.80) | 5.42 (std=1.22) | **5.79 (std=1.55)** |
 
 #### Semi-Stationary (Torso/Arm are strong, World mixed)
 | Task | World | Head | Torso | Arm |
 |---|---|---|---|---|
-| Key | 4.89 | 4.95 | **5.37** | 3.74 |
-| Visual | 3.11 | 5.11 | **5.95** | 3.79 |
-| Controls | 2.68 | 4.79 | **5.42** | 5.37 |
+| Key | 4.89 (std=2.26) | 4.95 (std=1.78) | **5.37 (std=1.46)** | 3.74 (std=1.82) |
+| Visual | 3.11 (std=1.85) | 5.11 (std=2.08) | **5.95 (std=1.35)** | 3.79 (std=1.58) |
+| Controls | 2.68 (std=1.73) | 4.79 (std=1.84) | **5.42 (std=1.17)** | 5.37 (std=2.11) |
 
 Findings: When users are stationary, world-fixed UIs are unequivocally easiest across all tasks (means ≥ 6.84), confirming that stability in the environment maximizes usability. As soon as users move, the numeric center shifts to body-anchored references: torso for continuous-view tasks (Key/Visual) and arm for quick input (Controls). Semi‑stationary lies between, with torso consistently strong and world no longer competitive for Visual/Controls. These patterns corroborate the intuition that optimal anchoring depends jointly on motion and task modality (continuous monitoring vs discrete control).
 
@@ -137,7 +155,7 @@ Findings: PSI frequently exceeds 2.0 for Stationary‑World (all tasks) and for 
 ### 1.9 Anchor Adaptability
 Data: `outputs/anchor_adaptability.csv`, `outputs/anchor_adaptability_within_summary.csv`, `outputs/adaptability_planned_across_summary.csv`, `outputs/adaptability_rated_across_summary.csv`
 
-Findings: Within a condition, many participants keep the same rated‑top across tasks (0–1 changes), but a non‑trivial fraction adapts (1–2 changes) consistent with “monitor vs control” needs. On average, within‑condition changes were: Stationary mean=0.21±0.54, Semi‑Stationary mean=1.32±0.75, Moving mean=1.16±0.76 (mean±std). Across conditions (per task), mean changes in planned_top and rated_top were both ≈0.00 (no average switches per task across the three conditions in the aggregate summaries), indicating that most context‑driven switching is captured within each condition across tasks rather than between conditions per task in this study.
+Findings: Within a condition, many participants keep the same rated‑top across tasks (0–1 changes), but a non‑trivial fraction adapts (1–2 changes) consistent with “monitor vs control” needs. On average, within‑condition changes were: Stationary mean=0.21 (std=0.54), Semi‑Stationary mean=1.32 (std=0.75), Moving mean=1.16 (std=0.76). Across conditions (per task), mean changes in planned_top and rated_top were both ≈0.00 (no average switches per task across the three conditions in the aggregate summaries), indicating that most context‑driven switching is captured within each condition across tasks rather than between conditions per task in this study.
 
 ### 1.10 Post-hoc analyses (Holm-adjusted)
 
@@ -158,7 +176,65 @@ Findings:
 - Moving: Torso outranks World for Key and Visual; Arm outranks World for Controls.
 - Semi‑Stationary: Torso outranks World for Visual; Arm/Torso outrank World for Controls.
 
----
+### 1.11 Performance vs demographics (StudyLogs timings)
+
+Data: `outputs/logs/inter_completion_summary.csv`, `outputs/logs/ui_task_summary.csv`, joined with `Questionnaire.csv`
+
+What we tested:
+- Whether participant age, XR experience (1–7), and videogame experience (1–7) are associated with objective performance derived from StudyLogs.
+- Performance metrics:
+  - Mean inter-completion interval per condition (lower is faster).
+  - Mean task completion duration averaged across tasks per condition (lower is faster).
+- Analyses:
+  - Spearman correlations per condition: `outputs/logs/performance_correlations_intervals.csv`, `outputs/logs/performance_correlations_durations.csv`
+  - Group comparisons via Kruskal–Wallis on ordinal bins (Age: <=30 / 31–40 / 41+; Experience: low/mid/high): `outputs/logs/performance_group_tests_intervals.csv`, `outputs/logs/performance_group_tests_durations.csv`
+
+Findings:
+- Age shows moderate positive associations with slower timings (higher = slower), most clearly when users are stationary:
+  - Inter-completion intervals and overall completion duration per condition (Spearman ρ [two‑sided p]):
+  - Definitions:
+    - Inter‑completion interval: mean time between consecutive TaskCompletion events per participant×condition (seconds). Lower = faster cadence between completed tasks.
+    - Overall completion duration: mean of per‑task mean completion times across tasks (Key/Visual/Controls) per participant×condition (seconds). Lower = faster average task time.
+
+  - Spearman ρ (rank correlation) size guide: |ρ|<0.1 none, 0.1–0.3 small, 0.3–0.5 moderate, >0.5 strong; the sign shows direction (positive = higher predictor → slower timing; negative = higher predictor → faster timing).
+  - Bracketed values [p] are the exact two‑sided p‑values; thresholds: p<.001 very strong, p<.01 strong, p<.05 significant, .05≤p<.10 marginal (“trend”), p≥.10 not significant.
+
+    | Condition | Inter‑completion interval | Overall completion duration |
+    |---|---|---|
+    | Stationary | 0.60 [0.006] | 0.55 [0.014] |
+    | Semi‑Stationary | 0.48 [0.035] | 0.41 [0.077] |
+    | Moving | 0.44 [0.057] | 0.42 [0.075] |
+
+  - Interpretation: Positive ρ means “older → slower.” Values around 0.4–0.6 indicate moderate associations. Bracketed values are exact p‑values; p<.05 denotes conventional statistical significance.
+- XR and videogame experience showed no reliable associations with performance timings across conditions (all p>.06).
+- Kruskal–Wallis group tests on age/experience bins did not yield consistent significant differences (all p≥.14), likely due to small bin counts.
+
+Figures:
+- `outputs/logs/figs/scatter_intervals_vs_age.png`
+- `outputs/logs/figs/scatter_intervals_vs_xr_experience.png`
+- `outputs/logs/figs/scatter_intervals_vs_videogame_experience.png`
+
+### 1.12 Task‑level performance (by task)
+
+Data:
+- Intervals by task: `outputs/logs/inter_completion_summary_by_task.csv`
+- Correlations by task: `outputs/logs/performance_correlations_intervals_by_task.csv`, `outputs/logs/performance_correlations_durations_by_task.csv`
+- Group tests by task: `outputs/logs/performance_group_tests_intervals_by_task.csv`, `outputs/logs/performance_group_tests_durations_by_task.csv`
+
+Findings:
+- Inter‑completion intervals (lower = faster cadence):
+  - Stationary: Age shows strong positive associations (ρ [p]) — Key 0.71 [0.00066], Visual 0.59 [0.0077], Controls 0.47 [0.043].
+  - Moving: Age correlates moderately for Key 0.49 [0.033] and Visual 0.47 [0.045]; Controls weaker and non‑significant.
+  - Semi‑Stationary: Visual shows a moderate association (0.49 [0.032]); other tasks non‑significant.
+- Completion duration (lower = faster per‑task time):
+  - Visual shows the clearest age effects — Stationary 0.734 [0.00035], Semi‑Stationary 0.709 [0.00067]; Moving shows a trend 0.409 [0.082].
+  - Videogame experience shows task‑specific negative associations for Visual duration (faster with more experience): Semi‑Stationary −0.495 [0.031], Stationary −0.479 [0.038]. Other tasks did not show reliable effects for XR/videogame experience.
+
+Note: Bracketed values are exact two‑sided p; interpretation guides for ρ and p are in §1.11.
+
+Brief interpretation:
+- Visual shows the most consistent age effect on speed (both cadence and duration), especially when not moving; Key shows moderate age effects; Controls show weak/none.
+- Where ρ is positive and significant, older participants tend to be slower on that metric; negative ρ indicates faster with higher predictor (seen only weakly for Controls).
 
 ## 2) Qualitative results and interpretation
 

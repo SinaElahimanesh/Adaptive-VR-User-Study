@@ -91,6 +91,27 @@ def inter_completion_intervals(tidy_ui: pd.DataFrame) -> Dict[str, pd.DataFrame]
     return {"intervals": intervals, "summary": summary}
 
 
+def inter_completion_intervals_by_task(tidy_ui: pd.DataFrame) -> Dict[str, pd.DataFrame]:
+    """Compute intervals (s) between consecutive TaskCompletion events per task.
+    Returns:
+      - intervals: participant×condition×task rows with interval_s
+      - summary: per participant×condition×task aggregated stats
+    """
+    if tidy_ui.empty:
+        return {"intervals": pd.DataFrame(), "summary": pd.DataFrame()}
+    cols = ['participant', 'condition', 'task', 'timestamp']
+    tc = tidy_ui[tidy_ui['event_type'] == 'TaskCompletion'][cols].dropna(subset=['timestamp'])
+    if tc.empty:
+        return {"intervals": pd.DataFrame(), "summary": pd.DataFrame()}
+    tc = tc.sort_values(['participant', 'condition', 'task', 'timestamp'])
+    tc['interval_s'] = tc.groupby(['participant', 'condition', 'task'])['timestamp'].diff()
+    intervals = tc.dropna(subset=['interval_s']).copy()
+    summary = (intervals.groupby(['participant', 'condition', 'task'])['interval_s']
+               .agg(['mean', 'median', 'std', 'count']).reset_index()
+               .rename(columns={'mean': 'mean_interval_s', 'median': 'median_interval_s', 'std': 'std_interval_s'}))
+    return {"intervals": intervals, "summary": summary}
+
+
     
 
 

@@ -1,0 +1,10 @@
+condition,metric,predictor,H,p_value,n_<=30,n_31-40,n_41+,n_low (1-3),n_mid (4-5),n_high (6-7)
+Moving,mean_interval_s,age,1.9999999999999964,0.36787944117144306,1.0,3.0,3.0,,,
+Moving,mean_interval_s,xr_experience,,,,,,7.0,0.0,0.0
+Moving,mean_interval_s,videogame_experience,2.314285714285713,0.3143831364400355,,,,5.0,1.0,1.0
+SemiStationary,mean_interval_s,age,2.1428571428571423,0.34251885509304575,4.0,1.0,1.0,,,
+SemiStationary,mean_interval_s,xr_experience,2.1428571428571423,0.14323490752466575,,,,5.0,1.0,0.0
+SemiStationary,mean_interval_s,videogame_experience,0.8571428571428577,0.6514390575310554,,,,2.0,2.0,2.0
+Stationary,mean_interval_s,age,0.8571428571428577,0.6514390575310554,2.0,2.0,2.0,,,
+Stationary,mean_interval_s,xr_experience,,,,,,6.0,0.0,0.0
+Stationary,mean_interval_s,videogame_experience,2.1428571428571423,0.34251885509304575,,,,3.0,1.0,2.0

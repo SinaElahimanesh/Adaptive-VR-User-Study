@@ -16,6 +16,12 @@ from logs_analysis.metrics import (
     summarize_ui_tasks,
     summarize_motion,
     inter_completion_intervals,
+    inter_completion_intervals_by_task,
+)
+from logs_analysis.mixed import (
+    load_demographics,
+    prepare_performance_tables,
+    analyze_performance_vs_demographics,
 )
 from logs_analysis.visuals import (
     plot_duration_boxplots,
@@ -23,6 +29,7 @@ from logs_analysis.visuals import (
     plot_num_completions,
     plot_mean_duration_heatmap,
     plot_motion_duration,
+    plot_perf_scatter_intervals,
 )
 
 
@@ -35,6 +42,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze StudyLogs")
     parser.add_argument("--logs_root", default="StudyLogs", help="Path to StudyLogs root directory")
     parser.add_argument("--outdir", default="outputs/logs", help="Directory to write log-derived outputs")
+    parser.add_argument("--questionnaire", default="Questionnaire.csv", help="Path to Questionnaire.csv for demographics (optional)")
     args = parser.parse_args()
 
     os.makedirs(args.outdir, exist_ok=True)
@@ -55,6 +63,10 @@ def main() -> None:
     ic = inter_completion_intervals(tidy_ui)
     save_table(ic['intervals'], os.path.join(args.outdir, "inter_completion_intervals.csv"))
     save_table(ic['summary'], os.path.join(args.outdir, "inter_completion_summary.csv"))
+    # Task-level intervals
+    ic_task = inter_completion_intervals_by_task(tidy_ui)
+    save_table(ic_task['intervals'], os.path.join(args.outdir, "inter_completion_intervals_by_task.csv"))
+    save_table(ic_task['summary'], os.path.join(args.outdir, "inter_completion_summary_by_task.csv"))
 
     # Figures
     figs_dir = os.path.join(args.outdir, 'figs')
@@ -69,6 +81,48 @@ def main() -> None:
     ]:
         if p:
             fig_paths.append(p)
+
+    # Optional: performance vs demographics (requires Questionnaire.csv)
+    qpath = Path(args.questionnaire)
+    if qpath.exists():
+        try:
+            demo = load_demographics(str(qpath))
+            perf = prepare_performance_tables(
+                inter_completion_summary_csv=os.path.join(args.outdir, "inter_completion_summary.csv"),
+                ui_task_summary_csv=os.path.join(args.outdir, "ui_task_summary.csv"),
+                inter_completion_summary_by_task_csv=os.path.join(args.outdir, "inter_completion_summary_by_task.csv"),
+            )
+            results = analyze_performance_vs_demographics(
+                demographics=demo,
+                intervals=perf["intervals"],
+                durations_overall=perf["durations_overall"],
+                intervals_by_task=perf.get("intervals_by_task"),
+                durations_by_task=perf.get("durations_by_task", perf["durations_by_task"]),
+            )
+            # Save stats
+            save_table(results["corr_intervals"], os.path.join(args.outdir, "performance_correlations_intervals.csv"))
+            save_table(results["corr_durations"], os.path.join(args.outdir, "performance_correlations_durations.csv"))
+            save_table(results["group_intervals"], os.path.join(args.outdir, "performance_group_tests_intervals.csv"))
+            save_table(results["group_durations"], os.path.join(args.outdir, "performance_group_tests_durations.csv"))
+            # By-task stats (if available)
+            if "corr_intervals_by_task" in results:
+                save_table(results["corr_intervals_by_task"], os.path.join(args.outdir, "performance_correlations_intervals_by_task.csv"))
+            if "group_intervals_by_task" in results:
+                save_table(results["group_intervals_by_task"], os.path.join(args.outdir, "performance_group_tests_intervals_by_task.csv"))
+            if "corr_durations_by_task" in results:
+                save_table(results["corr_durations_by_task"], os.path.join(args.outdir, "performance_correlations_durations_by_task.csv"))
+            if "group_durations_by_task" in results:
+                save_table(results["group_durations_by_task"], os.path.join(args.outdir, "performance_group_tests_durations_by_task.csv"))
+            # Figures: scatter for intervals vs each predictor
+            joined = results["joined_intervals"]
+            for demo_col in ["age", "xr_experience", "videogame_experience"]:
+                fig = plot_perf_scatter_intervals(joined, demo_col, figs_dir)
+                if fig:
+                    fig_paths.append(fig)
+        except Exception as e:
+            print(f"[WARN] Performance-vs-demographics analysis skipped due to error: {e}")
+    else:
+        print(f"[INFO] Questionnaire not found at {qpath}; skipping performance-vs-demographics.")
 
     print(f"Saved logs analyses to {args.outdir}")
     print("Participants detected:", ", ".join(discover_participants(args.logs_root)))

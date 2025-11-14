@@ -101,3 +101,36 @@ def plot_motion_duration(motion_summary: pd.DataFrame, outdir: str) -> str:
     plt.savefig(fname, dpi=150)
     plt.close()
     return fname
+
+
+def plot_perf_scatter_intervals(perf_intervals_joined: pd.DataFrame, demo_col: str, outdir: str) -> str:
+    """Scatter of mean_interval_s vs a demographic predictor, colored by condition."""
+    _ensure_dir(outdir)
+    df = perf_intervals_joined.copy()
+    if df.empty or demo_col not in df.columns:
+        return ""
+    # Filter rows with both values present
+    df = df[['mean_interval_s', 'condition', demo_col]].copy()
+    df = df.dropna(subset=['mean_interval_s', demo_col])
+    if df.empty:
+        return ""
+    plt.figure(figsize=(7, 5))
+    sns.scatterplot(data=df, x=demo_col, y='mean_interval_s', hue='condition')
+    sns.regplot(
+        data=df,
+        x=demo_col,
+        y='mean_interval_s',
+        scatter=False,
+        ci=None,
+        color='black',
+        line_kws={'linewidth': 1, 'alpha': 0.6},
+    )
+    plt.xlabel(demo_col.replace('_', ' ').title())
+    plt.ylabel('Mean inter-completion interval (s)')
+    plt.title(f'Performance vs {demo_col.replace("_", " ").title()}')
+    plt.legend(title='Condition', bbox_to_anchor=(1.05, 1), loc='upper left')
+    fname = os.path.join(outdir, f'scatter_intervals_vs_{demo_col}.png')
+    plt.tight_layout()
+    plt.savefig(fname, dpi=150)
+    plt.close()
+    return fname
