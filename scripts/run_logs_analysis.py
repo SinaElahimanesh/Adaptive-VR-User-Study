@@ -17,20 +17,14 @@ from logs_analysis.metrics import (
     summarize_motion,
     inter_completion_intervals,
     inter_completion_intervals_by_task,
+    summarize_ui_tasks_by_anchor,
 )
 from logs_analysis.mixed import (
     load_demographics,
     prepare_performance_tables,
     analyze_performance_vs_demographics,
 )
-from logs_analysis.visuals import (
-    plot_duration_boxplots,
-    plot_accuracy_bars,
-    plot_num_completions,
-    plot_mean_duration_heatmap,
-    plot_motion_duration,
-    plot_perf_scatter_intervals,
-)
+# Defer importing plotting utilities until needed to avoid heavy deps in headless runs
 
 
 def save_table(df: pd.DataFrame, path: str) -> None:
@@ -43,6 +37,7 @@ def main() -> None:
     parser.add_argument("--logs_root", default="StudyLogs", help="Path to StudyLogs root directory")
     parser.add_argument("--outdir", default="outputs/logs", help="Directory to write log-derived outputs")
     parser.add_argument("--questionnaire", default="Questionnaire.csv", help="Path to Questionnaire.csv for demographics (optional)")
+    parser.add_argument("--skip_figs", action="store_true", help="Skip generating figures (headless)")
     args = parser.parse_args()
 
     os.makedirs(args.outdir, exist_ok=True)
@@ -54,6 +49,26 @@ def main() -> None:
     # UI task summaries
     ui_summary = summarize_ui_tasks(tidy_ui)
     save_table(ui_summary, os.path.join(args.outdir, "ui_task_summary.csv"))
+    # UI task summaries by anchor (coordinate system)
+    ui_summary_anchor = summarize_ui_tasks_by_anchor(tidy_ui)
+    save_table(ui_summary_anchor, os.path.join(args.outdir, "ui_task_summary_by_anchor.csv"))
+    # Overall roll-up across participants per condition×task×anchor
+    if not ui_summary_anchor.empty:
+        overall_anchor = (
+            ui_summary_anchor
+            .groupby(['condition', 'task', 'anchor'])
+            .agg(
+                participants=('participant', 'nunique'),
+                completions=('num_completions', 'sum'),
+                mean_duration_s=('mean_duration_s', 'mean'),
+                median_duration_s=('median_duration_s', 'mean'),
+                std_duration_s=('std_duration_s', 'mean'),
+                accuracy=('accuracy', 'mean'),
+            )
+            .reset_index()
+            .sort_values(['condition', 'task', 'anchor'])
+        )
+        save_table(overall_anchor, os.path.join(args.outdir, "ui_task_summary_by_anchor_overall.csv"))
 
     # Motion capture summaries (lightweight)
     motion_summary = summarize_motion(args.logs_root)
@@ -69,18 +84,28 @@ def main() -> None:
     save_table(ic_task['summary'], os.path.join(args.outdir, "inter_completion_summary_by_task.csv"))
 
     # Figures
-    figs_dir = os.path.join(args.outdir, 'figs')
-    os.makedirs(figs_dir, exist_ok=True)
     fig_paths = []
-    for p in [
-        plot_duration_boxplots(tidy_ui, figs_dir),
-        plot_accuracy_bars(ui_summary, figs_dir),
-        plot_num_completions(ui_summary, figs_dir),
-        plot_mean_duration_heatmap(ui_summary, figs_dir),
-        plot_motion_duration(motion_summary, figs_dir),
-    ]:
-        if p:
-            fig_paths.append(p)
+    if not args.skip_figs:
+        # Import plotting functions lazily to avoid importing matplotlib/seaborn when skipping
+        from logs_analysis.visuals import (
+            plot_duration_boxplots,
+            plot_accuracy_bars,
+            plot_num_completions,
+            plot_mean_duration_heatmap,
+            plot_motion_duration,
+            plot_perf_scatter_intervals,
+        )
+        figs_dir = os.path.join(args.outdir, 'figs')
+        os.makedirs(figs_dir, exist_ok=True)
+        for p in [
+            plot_duration_boxplots(tidy_ui, figs_dir),
+            plot_accuracy_bars(ui_summary, figs_dir),
+            plot_num_completions(ui_summary, figs_dir),
+            plot_mean_duration_heatmap(ui_summary, figs_dir),
+            plot_motion_duration(motion_summary, figs_dir),
+        ]:
+            if p:
+                fig_paths.append(p)
 
     # Optional: performance vs demographics (requires Questionnaire.csv)
     qpath = Path(args.questionnaire)
@@ -114,11 +139,16 @@ def main() -> None:
             if "group_durations_by_task" in results:
                 save_table(results["group_durations_by_task"], os.path.join(args.outdir, "performance_group_tests_durations_by_task.csv"))
             # Figures: scatter for intervals vs each predictor
-            joined = results["joined_intervals"]
-            for demo_col in ["age", "xr_experience", "videogame_experience"]:
-                fig = plot_perf_scatter_intervals(joined, demo_col, figs_dir)
-                if fig:
-                    fig_paths.append(fig)
+            if not args.skip_figs:
+                joined = results["joined_intervals"]
+                # Import inside block
+                from logs_analysis.visuals import plot_perf_scatter_intervals
+                figs_dir = os.path.join(args.outdir, 'figs')
+                os.makedirs(figs_dir, exist_ok=True)
+                for demo_col in ["age", "xr_experience", "videogame_experience"]:
+                    fig = plot_perf_scatter_intervals(joined, demo_col, figs_dir)
+                    if fig:
+                        fig_paths.append(fig)
         except Exception as e:
             print(f"[WARN] Performance-vs-demographics analysis skipped due to error: {e}")
     else:

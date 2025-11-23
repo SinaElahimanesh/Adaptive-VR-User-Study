@@ -53,6 +53,35 @@ def summarize_ui_tasks(tidy_ui: pd.DataFrame) -> pd.DataFrame:
     return summary
 
 
+def summarize_ui_tasks_by_anchor(tidy_ui: pd.DataFrame) -> pd.DataFrame:
+    """Summarize TaskCompletion performance by participant×condition×task×anchor.
+    Anchor is taken from the 'coordinate_system' field in the tidy UI events.
+    """
+    if tidy_ui.empty:
+        return pd.DataFrame()
+    tc = tidy_ui[tidy_ui['event_type'] == 'TaskCompletion'].copy()
+    # Normalize anchor names for consistency and map limb variants to canonical anchors
+    raw_anchor = tc['coordinate_system'].astype('string').str.strip().str.lower()
+    anchor_norm = (
+        raw_anchor
+        .mask(raw_anchor.str.contains('limb') | raw_anchor.str.contains('arm'), 'arm')
+        .mask(raw_anchor.str.contains('head'), 'head')
+        .mask(raw_anchor.str.contains('torso'), 'torso')
+        .mask(raw_anchor.str.contains('world'), 'world')
+        .fillna(raw_anchor)
+    )
+    tc['anchor'] = anchor_norm.str.title()
+    tc['is_correct'] = tc['correct'].astype('boolean')
+    summary = (tc.groupby(['participant', 'condition', 'task', 'anchor'])
+               .agg(num_completions=('event_type', 'count'),
+                    mean_duration_s=('duration', 'mean'),
+                    median_duration_s=('duration', 'median'),
+                    std_duration_s=('duration', 'std'),
+                    accuracy=('is_correct', 'mean'))
+               .reset_index())
+    return summary
+
+
     
 
 
