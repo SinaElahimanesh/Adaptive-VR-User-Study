@@ -246,28 +246,35 @@ Data: `outputs/logs/ui_task_summary_by_anchor_overall.csv`
 #### Stationary
 | Task | World | Head | Torso | Arm |
 |---|---|---|---|---|
-| Key | 32.95 |  | 32.31 |  |
-| Visual | 10.18 |  |  |  |
-| Controls | 5.02 | 2.91 |  | 4.93 |
+| Key | 32.95 ± 18.04 (95.0%) |  | 32.31 ± 13.38 (5.0%) |  |
+| Visual | 10.18 ± 5.18 (100%) |  |  |  |
+| Controls | 5.02 ± 2.55 (89.5%) | 2.91 ± 1.21 (5.3%) |  | 4.93 ± 2.53 (5.3%) |
 
 #### Semi‑Stationary
 | Task | World | Head | Torso | Arm |
 |---|---|---|---|---|
-| Key | 44.83 | 43.43 | 48.35 | 45.30 |
-| Visual | 8.24 | 10.07 | 9.32 | 9.99 |
-| Controls | 7.66 | 4.45 | 6.04 | 6.51 |
+| Key | 44.83 ± 18.43 (33.3%) | 43.43 ± 17.31 (38.1%) | 48.35 ± 18.25 (14.3%) | 45.30 ± 22.67 (14.3%) |
+| Visual | 8.24 ± 3.77 (10.0%) | 10.07 ± 4.62 (40.0%) | 9.32 ± 4.29 (45.0%) | 9.99 ± 4.92 (5.0%) |
+| Controls | 7.66 ± 2.60 (5.3%) | 4.45 ± 1.75 (21.1%) | 6.04 ± 3.69 (15.8%) | 6.51 ± 3.63 (57.9%) |
 
 #### Moving
 | Task | World | Head | Torso | Arm |
 |---|---|---|---|---|
-| Key | 70.57 | 58.41 | 54.57 | 62.89 |
-| Visual |  | 9.84 | 11.02 | 11.30 |
-| Controls |  | 5.45 | 6.40 | 8.07 |
+| Key | 70.57 ± 31.91 (5.3%) | 58.41 ± 25.86 (42.1%) | 54.57 ± 26.33 (36.8%) | 62.89 ± 25.86 (15.8%) |
+| Visual |  | 9.84 ± 4.55 (31.6%) | 11.02 ± 5.56 (47.4%) | 11.30 ± 6.75 (21.1%) |
+| Controls |  | 5.45 ± 4.12 (28.6%) | 6.40 ± 4.55 (14.3%) | 8.07 ± 6.23 (57.1%) |
+
+Significance tests (timings by anchor): Omnibus and pairwise tests did not detect significant timing differences between anchors within any condition×task at α=0.05. Given modest sample sizes and variability, interpret these null results cautiously. Practical preferences remain aligned with the mean timings shown above.
 
 Implications:
 - Stationary: World is the practical default across tasks; even Controls are near‑fastest in World (≈5.0 s), with Head slightly faster when used.
 - Semi‑Stationary: Head often yields the fastest Controls (≈4.45 s) and competitive Key; Visual favors World/Torso (≈8.2–9.3 s). Body anchors (Torso/Arm) remain viable without clear penalties.
 - Moving: For Controls, Head is fastest (≈5.45 s), with Torso close; Arm remains usable but slower on average. For Key/Visual, Torso/Head are faster than World, matching users’ stated preferences.
+
+Significance implications:
+- No significant timing differences were detected within condition×task (α=0.05). While not statistically separated, central tendencies still favor World when Stationary and Torso/Arm when Moving for Visual/Controls, respectively.
+
+ 
 
 ## 2) Qualitative results and interpretation
 

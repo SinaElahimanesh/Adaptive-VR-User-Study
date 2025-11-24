@@ -18,6 +18,7 @@ from logs_analysis.metrics import (
     inter_completion_intervals,
     inter_completion_intervals_by_task,
     summarize_ui_tasks_by_anchor,
+    compute_anchor_significance,
 )
 from logs_analysis.mixed import (
     load_demographics,
@@ -69,6 +70,12 @@ def main() -> None:
             .sort_values(['condition', 'task', 'anchor'])
         )
         save_table(overall_anchor, os.path.join(args.outdir, "ui_task_summary_by_anchor_overall.csv"))
+        # Significance tests across anchors within each condition×task
+        omni, pair = compute_anchor_significance(ui_summary_anchor)
+        if not omni.empty:
+            save_table(omni, os.path.join(args.outdir, "ui_anchor_significance.csv"))
+        if not pair.empty:
+            save_table(pair, os.path.join(args.outdir, "ui_anchor_significance_pairwise.csv"))
 
     # Motion capture summaries (lightweight)
     motion_summary = summarize_motion(args.logs_root)

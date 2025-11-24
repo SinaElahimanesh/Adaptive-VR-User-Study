@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import numpy as np
 import pandas as pd
+from scipy.stats import kruskal, mannwhitneyu
 
 from .io import discover_participants, load_ui_log, scan_motion_log
 
@@ -145,3 +146,90 @@ def inter_completion_intervals_by_task(tidy_ui: pd.DataFrame) -> Dict[str, pd.Da
 
 
     
+
+# Significance tests for anchor effects within each condition×task
+def compute_anchor_significance(
+    ui_summary_anchor: pd.DataFrame,
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    For each (condition, task), test if completion times differ across anchors.
+    - Uses participant-level mean_duration_s from ui_summary_anchor.
+    - Omnibus: Kruskal-Wallis across available anchors (nonparametric, unequal n).
+    - Pairwise: Mann-Whitney U for all anchor pairs with Holm correction.
+    Returns:
+      (omnibus_df, pairwise_df)
+    """
+    if ui_summary_anchor.empty:
+        return pd.DataFrame(), pd.DataFrame()
+
+    required_cols = {'condition', 'task', 'anchor', 'participant', 'mean_duration_s'}
+    if not required_cols.issubset(set(ui_summary_anchor.columns)):
+        return pd.DataFrame(), pd.DataFrame()
+
+    omnibus_rows: List[Dict] = []
+    pairwise_rows: List[Dict] = []
+
+    # Prepare groups
+    grouped = ui_summary_anchor.groupby(['condition', 'task'])
+    for (cond, task), df_ct in grouped:
+        anchor_groups = []
+        labels = []
+        for anc, df_a in df_ct.groupby('anchor'):
+            vals = df_a['mean_duration_s'].dropna().values
+            if len(vals) >= 2:
+                anchor_groups.append(vals)
+                labels.append(anc)
+        k = len(anchor_groups)
+        n_total = int(sum(len(g) for g in anchor_groups))
+        if k < 2:
+            continue
+        try:
+            H, p = kruskal(*anchor_groups)
+        except Exception:
+            continue
+        # Epsilon-squared effect size for Kruskal
+        eps2 = (H - (k - 1)) / (n_total - 1) if n_total > 1 else np.nan
+        omnibus_rows.append({
+            'condition': cond,
+            'task': task,
+            'anchors': k,
+            'n_total': n_total,
+            'H_kruskal': H,
+            'p_kruskal': p,
+            'epsilon_squared': eps2,
+        })
+
+        # Pairwise Mann-Whitney with Holm correction
+        raw_tests: List[Tuple[str, str, float, float, int, int]] = []
+        for i in range(k):
+            for j in range(i + 1, k):
+                a_i, a_j = labels[i], labels[j]
+                x, y = anchor_groups[i], anchor_groups[j]
+                try:
+                    u_stat, p_pair = mannwhitneyu(x, y, alternative='two-sided')
+                except Exception:
+                    continue
+                raw_tests.append((a_i, a_j, u_stat, p_pair, len(x), len(y)))
+        # Holm adjustment
+        if raw_tests:
+            m = len(raw_tests)
+            # sort by p ascending
+            raw_tests_sorted = sorted(raw_tests, key=lambda t: t[3])
+            adjusted: Dict[Tuple[str, str], float] = {}
+            for idx, (a_i, a_j, _u, p_raw, _ni, _nj) in enumerate(raw_tests_sorted, start=1):
+                p_holm = min((m - idx + 1) * p_raw, 1.0)
+                adjusted[(a_i, a_j)] = p_holm
+            for a_i, a_j, u_stat, p_raw, ni, nj in raw_tests:
+                pairwise_rows.append({
+                    'condition': cond,
+                    'task': task,
+                    'anchor_a': a_i,
+                    'anchor_b': a_j,
+                    'n_a': ni,
+                    'n_b': nj,
+                    'U_mannwhitney': u_stat,
+                    'p_raw': p_raw,
+                    'p_holm': adjusted.get((a_i, a_j), np.nan),
+                })
+
+    return pd.DataFrame(omnibus_rows), pd.DataFrame(pairwise_rows)
